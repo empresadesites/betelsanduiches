@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy GitHub Pages
 
 on:
   push:
@@ -13,39 +13,40 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
-      - name: Checkout
+      - name: Baixar projeto
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: npm install
 
-      - name: Build
+      - name: Gerar site
         run: npm run build
 
-      - name: Setup Pages
+      - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Enviar arquivos
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy
+      - name: Publicar site
         id: deployment
         uses: actions/deploy-pages@v4
